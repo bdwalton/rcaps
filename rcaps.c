@@ -55,7 +55,7 @@ static VALUE caps_to_string (VALUE self) {
   cap_t caps;
   char *text;
 
-  Data_Get_Struct(self, cap_t, caps);
+  Data_Get_Struct(self, struct _cap_struct, caps);
   text = cap_to_text(caps, NULL);
   return(rb_str_new2(text));
 }
@@ -63,7 +63,8 @@ static VALUE caps_to_string (VALUE self) {
 static VALUE caps_clear (VALUE self) {
   cap_t caps;
 
-  Data_Get_Struct(self, cap_t, caps);
+  //we use struct _cap_struct here to shut up the gcc warning...
+  Data_Get_Struct(self, struct _cap_struct, caps);
 
   if (cap_clear(caps) != 0)
     rb_raise(rb_eSystemCallError, "Error clearing capability set.");
