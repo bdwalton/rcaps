@@ -15,6 +15,7 @@ Init_rcaps()
 
   /* Caps instance methods */
   rb_define_method(rb_cCaps, "to_s", caps_to_string, 0);
+  rb_define_method(rb_cCaps, "clear", caps_clear, 0);
 
   /* add flags and capability names */
   caps_setup_flags();
@@ -49,9 +50,20 @@ static VALUE caps_to_string (VALUE self) {
   cap_t caps;
   char *text;
 
-  Data_Get_Struct (self, cap_t, caps);
+  Data_Get_Struct(self, cap_t, caps);
   text = cap_to_text(caps, NULL);
   return(rb_str_new2(text));
+}
+
+static VALUE caps_clear (VALUE self) {
+  cap_t caps;
+
+  Data_Get_Struct(self, cap_t, caps);
+
+  if (cap_clear(caps) != 0)
+    rb_raise(rb_eSystemCallError, "Error clearing capability set.");
+
+  return self;
 }
 
 

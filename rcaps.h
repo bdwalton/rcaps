@@ -14,3 +14,4 @@ static VALUE caps_get_proc (VALUE klass);
 
 /* Caps instance methods */
 static VALUE caps_to_string (VALUE self);
+static VALUE caps_clear (VALUE self);
