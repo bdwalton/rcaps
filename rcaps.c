@@ -40,7 +40,12 @@ static void caps_free (cap_t caps) {
 
 /* Caps class methods */
 static VALUE caps_get_proc (VALUE klass) {
-  return Data_Wrap_Struct(klass, caps_mark, caps_free, cap_get_proc());
+  cap_t caps;
+
+  if ((caps = cap_get_proc()) == NULL)
+    rb_raise(rb_eSystemCallError, "Error retrieving active capabilties.");
+
+  return Data_Wrap_Struct(klass, caps_mark, caps_free, caps);
 }
 
 /* Caps instance methods */
