@@ -90,13 +90,14 @@ static VALUE caps_activate (VALUE self) {
   return self;
 }
 
+//a generic function called by cap_{SET|CLEAR}_{EFFECTIVE|INHERITABLE|PERMITTED}
 static VALUE captoggle(VALUE self, VALUE cap, cap_flag_t type, cap_flag_value_t toggle) {
   cap_t caps;
   cap_value_t set[1];
 
   Data_Get_Struct(self, struct _cap_struct, caps);
 
-  FIXNUM_P(cap);
+  Check_Type(cap, T_FIXNUM);
   set[0] = FIX2INT(cap);
 
   if (cap_set_flag(caps, type, 1, set, toggle) != 0)
@@ -111,7 +112,6 @@ CAPMOD(PERMITTED,SET);
 CAPMOD(PERMITTED,CLEAR);
 CAPMOD(INHERITABLE,SET);
 CAPMOD(INHERITABLE,CLEAR);
-
 
 static void caps_setup_flags (void) {
   /* these constants are the basis of the enumerated type cap_flag_t */
