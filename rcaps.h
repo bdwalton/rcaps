@@ -15,6 +15,7 @@ static VALUE caps_get_proc (VALUE);
 /* Caps instance methods */
 static VALUE caps_to_string (VALUE);
 static VALUE caps_clear (VALUE);
+static VALUE caps_activate (VALUE);
 static VALUE captoggle (VALUE, VALUE, cap_flag_t, cap_flag_value_t);
 // functions to toggle capabilities in the various sets.
 static VALUE caps_SET_EFFECTIVE (VALUE, VALUE);

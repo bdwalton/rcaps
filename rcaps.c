@@ -16,6 +16,7 @@ Init_rcaps()
   /* Caps instance methods */
   rb_define_method(rb_cCaps, "to_s", caps_to_string, 0);
   rb_define_method(rb_cCaps, "clear", caps_clear, 0);
+  rb_define_method(rb_cCaps, "activate", caps_activate, 0);
   rb_define_method(rb_cCaps, "set_effective", caps_SET_EFFECTIVE, 1);
   rb_define_method(rb_cCaps, "clear_effective", caps_CLEAR_EFFECTIVE, 1);
   rb_define_method(rb_cCaps, "set_permitted", caps_SET_PERMITTED, 1);
@@ -63,7 +64,7 @@ static VALUE caps_to_string (VALUE self) {
 
   Data_Get_Struct(self, struct _cap_struct, caps);
   text = cap_to_text(caps, NULL);
-  return(rb_str_new2(text));
+  return rb_str_new2(text);
 }
 
 static VALUE caps_clear (VALUE self) {
@@ -74,6 +75,17 @@ static VALUE caps_clear (VALUE self) {
 
   if (cap_clear(caps) != 0)
     rb_raise(rb_eSystemCallError, "Error clearing capability set.");
+
+  return self;
+}
+
+static VALUE caps_activate (VALUE self) {
+  cap_t caps;
+
+  Data_Get_Struct(self, struct _cap_struct, caps);
+
+  if (cap_set_proc(caps) != 0)
+    rb_raise(rb_eSystemCallError, "Error installing capability set.");
 
   return self;
 }
