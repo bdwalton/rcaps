@@ -8,9 +8,10 @@ static VALUE rb_cCaps;
 Init_rcaps()
 {
   rb_cCaps = rb_define_class("Caps", rb_cObject);
-  rb_define_alloc_func(rb_cCaps, caps_allocate);
+  //rb_define_alloc_func(rb_cCaps, caps_allocate);
 
   /* Caps class methods */
+  rb_define_singleton_method(rb_cCaps, "new", caps_new, -1);
   rb_define_singleton_method(rb_cCaps, "get_proc", caps_get_proc, 0);
 
   /* Caps instance methods */
@@ -25,34 +26,42 @@ Init_rcaps()
   rb_define_method(rb_cCaps, "clear_inheritable", caps_CLEAR_INHERITABLE, 1);
 
   /* add flags and capability names */
-  caps_setup_flags();
+  //caps_setup_flags();
   caps_setup_constants();
 }
 
-/* functions related to Class Caps (housekeeping stuff) */
-
-//allocate a new Caps object
-static VALUE caps_allocate (VALUE klass) {
-  //cap_t caps = cap_init();
-  return Data_Wrap_Struct (klass, caps_mark, caps_free, cap_init());
-}
-
-//for the garbage collector...this object is too simple.
-static void caps_mark (cap_t caps) {}
-
+/* Housekeeping for the GC */
 //how to destruct a Caps object
 static void caps_free (cap_t caps) {
     cap_free(caps);
 }
 
-/* Caps class methods */
+/* Class/singleton methods */
+
+static VALUE caps_new (int argc, VALUE *argv, VALUE klass) {
+  cap_t caps;
+
+  if (argc < 1) {
+    caps = cap_init();
+  } else if (argc > 1) {
+    rb_raise(rb_eArgError, "More than one argument to new()");
+  } else {
+    Check_Type(argv[0], T_STRING);
+    caps = cap_from_text(StringValuePtr(argv[0]));
+    if (!caps)
+      rb_raise(rb_eArgError, "Invalid capability text definition passed to new()");
+  }
+
+  return Data_Wrap_Struct(klass, 0, caps_free, caps);
+}
+
 static VALUE caps_get_proc (VALUE klass) {
   cap_t caps;
 
   if ((caps = cap_get_proc()) == NULL)
     rb_raise(rb_eSystemCallError, "Error retrieving active capabilties.");
 
-  return Data_Wrap_Struct(klass, caps_mark, caps_free, caps);
+  return Data_Wrap_Struct(klass, 0, caps_free, caps);
 }
 
 /* Caps instance methods */
@@ -64,9 +73,11 @@ static VALUE caps_to_string (VALUE self) {
 
   Data_Get_Struct(self, struct _cap_struct, caps);
   text = cap_to_text(caps, NULL);
+
   return rb_str_new2(text);
 }
 
+// Caps#clear
 static VALUE caps_clear (VALUE self) {
   cap_t caps;
 
@@ -79,6 +90,7 @@ static VALUE caps_clear (VALUE self) {
   return self;
 }
 
+// Caps#activate
 static VALUE caps_activate (VALUE self) {
   cap_t caps;
 
