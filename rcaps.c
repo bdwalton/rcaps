@@ -16,6 +16,12 @@ Init_rcaps()
   /* Caps instance methods */
   rb_define_method(rb_cCaps, "to_s", caps_to_string, 0);
   rb_define_method(rb_cCaps, "clear", caps_clear, 0);
+  rb_define_method(rb_cCaps, "set_effective", caps_SET_EFFECTIVE, 1);
+  rb_define_method(rb_cCaps, "clear_effective", caps_CLEAR_EFFECTIVE, 1);
+  rb_define_method(rb_cCaps, "set_permitted", caps_SET_PERMITTED, 1);
+  rb_define_method(rb_cCaps, "clear_permitted", caps_CLEAR_PERMITTED, 1);
+  rb_define_method(rb_cCaps, "set_inheritable", caps_SET_INHERITABLE, 1);
+  rb_define_method(rb_cCaps, "clear_inheritable", caps_CLEAR_INHERITABLE, 1);
 
   /* add flags and capability names */
   caps_setup_flags();
@@ -71,6 +77,28 @@ static VALUE caps_clear (VALUE self) {
 
   return self;
 }
+
+static VALUE captoggle(VALUE self, VALUE cap, cap_flag_t type, cap_flag_value_t toggle) {
+  cap_t caps;
+  cap_value_t set[1];
+
+  Data_Get_Struct(self, struct _cap_struct, caps);
+
+  FIXNUM_P(cap);
+  set[0] = FIX2INT(cap);
+
+  if (cap_set_flag(caps, type, 1, set, toggle) != 0)
+    rb_raise(rb_eSystemCallError, "Error making capability flag change.");
+
+  return self;
+}
+
+CAPMOD(EFFECTIVE,SET);
+CAPMOD(EFFECTIVE,CLEAR);
+CAPMOD(PERMITTED,SET);
+CAPMOD(PERMITTED,CLEAR);
+CAPMOD(INHERITABLE,SET);
+CAPMOD(INHERITABLE,CLEAR);
 
 
 static void caps_setup_flags (void) {
