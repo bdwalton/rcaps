@@ -26,8 +26,16 @@ static VALUE caps_SET_PERMITTED (VALUE, VALUE);
 static VALUE caps_CLEAR_PERMITTED (VALUE, VALUE);
 static VALUE caps_SET_INHERITABLE (VALUE, VALUE);
 static VALUE caps_CLEAR_INHERITABLE (VALUE, VALUE);
+static VALUE caps_EFFECTIVE (VALUE, VALUE);
+static VALUE caps_PERMITTED (VALUE, VALUE);
+static VALUE caps_INHERITABLE (VALUE, VALUE);
 
-#define CAPMOD(CSET, CTOGGLE) \
+#define CAPTOG(CSET, CTOGGLE) \
 static VALUE caps_## CTOGGLE ## _ ## CSET (VALUE self, VALUE cap) {\
   return(captoggle(self, cap, CAP_ ## CSET, CAP_ ## CTOGGLE));\
+}
+
+#define CAPQUERY(CSET) \
+static VALUE caps_## CSET (VALUE self, VALUE cap) {\
+  return(capisset(self, cap, CAP_ ## CSET));\
 }

@@ -25,6 +25,9 @@ Init_rcaps()
   rb_define_method(rb_cCaps, "clear_permitted", caps_CLEAR_PERMITTED, 1);
   rb_define_method(rb_cCaps, "set_inheritable", caps_SET_INHERITABLE, 1);
   rb_define_method(rb_cCaps, "clear_inheritable", caps_CLEAR_INHERITABLE, 1);
+  rb_define_method(rb_cCaps, "effective?", caps_EFFECTIVE, 1);
+  rb_define_method(rb_cCaps, "permitted?", caps_PERMITTED, 1);
+  rb_define_method(rb_cCaps, "inheritable?", caps_INHERITABLE, 1);
 
   /* add flags and capability names */
   caps_setup_flags();
@@ -137,12 +140,30 @@ static VALUE captoggle(VALUE self, VALUE cap, cap_flag_t type, cap_flag_value_t 
   return self;
 }
 
-CAPMOD(EFFECTIVE,SET);
-CAPMOD(EFFECTIVE,CLEAR);
-CAPMOD(PERMITTED,SET);
-CAPMOD(PERMITTED,CLEAR);
-CAPMOD(INHERITABLE,SET);
-CAPMOD(INHERITABLE,CLEAR);
+CAPTOG(EFFECTIVE,SET);
+CAPTOG(EFFECTIVE,CLEAR);
+CAPTOG(PERMITTED,SET);
+CAPTOG(PERMITTED,CLEAR);
+CAPTOG(INHERITABLE,SET);
+CAPTOG(INHERITABLE,CLEAR);
+
+static VALUE capisset (VALUE self, VALUE cap, cap_flag_t flag) {
+  cap_t caps;
+  cap_flag_value_t val;
+
+  Data_Get_Struct(self, struct _cap_struct, caps);
+
+  Check_Type(cap, T_FIXNUM);
+
+  if (cap_get_flag(caps, FIX2INT(cap) - 1, flag, &val) != 0)
+    rb_raise(rb_eSystemCallError, "Error retrieving capability status.");
+
+  return (val == CAP_SET ? Qtrue : Qfalse);
+}
+
+CAPQUERY(EFFECTIVE);
+CAPQUERY(PERMITTED);
+CAPQUERY(INHERITABLE);
 
 static void caps_setup_flags (void) {
   /* these constants are the basis of the enumerated type cap_flag_t */
