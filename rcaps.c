@@ -127,14 +127,16 @@ static VALUE caps_activate (VALUE self) {
 static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_value_t toggle) {
   VALUE arrsize, arrelem;
   cap_t caps;
-  cap_value_t *set;
+  cap_value_t *set = NULL;
   int listsize, i, arrval;
 
   Data_Get_Struct(self, struct _cap_struct, caps);
 
   switch (TYPE(caplist)) {
     case T_FIXNUM:
-      set = malloc(sizeof(cap_value_t));
+      if ((set = malloc(sizeof(cap_value_t))) == NULL)
+	rb_raise(rb_eSystemCallError, "Error allocating memory.");
+
       arrval = FIX2INT(caplist) - 1;
       listsize = 1; //for use in cap_set_flag
       if (arrval < CAP_CHOWN || arrval > CAP_LEASE)
@@ -150,7 +152,9 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
 	  if (listsize > CAP_LEASE)
 	    rb_raise(rb_eArgError, "Too many capabilities to set at once.");
 
-	  set = malloc(listsize * sizeof(cap_value_t));
+	  if ((set = malloc(listsize * sizeof(cap_value_t))) == NULL)
+	    rb_raise(rb_eSystemCallError, "Error allocating memory.");
+
 	  for (i = 0; i < listsize; i++) {
 	    arrelem = rb_funcall(caplist, rb_intern("[]"), 1, INT2FIX(i));
 	    Check_Type(arrelem, T_FIXNUM);
@@ -170,6 +174,8 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
 
   if (cap_set_flag(caps, type, listsize, set, toggle) != 0)
     rb_raise(rb_eSystemCallError, "Error making capability flag change.");
+
+  if (set) free(set);
 
   return self;
 }
