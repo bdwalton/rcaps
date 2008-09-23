@@ -10,7 +10,8 @@ static void caps_setup_constants (void);  //define names for capabilities
 static void caps_free (cap_t);
 
 /* Caps class methods */
-static VALUE caps_new (int argc, VALUE *, VALUE);
+static VALUE caps_init (int, VALUE *, VALUE);
+static VALUE caps_new (int, VALUE *, VALUE);
 static VALUE caps_get_proc (VALUE);
 
 /* Caps instance methods */
