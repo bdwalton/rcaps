@@ -124,17 +124,51 @@ static VALUE caps_activate (VALUE self) {
 }
 
 //a generic function called by cap_{SET|CLEAR}_{EFFECTIVE|INHERITABLE|PERMITTED}
-static VALUE captoggle(VALUE self, VALUE cap, cap_flag_t type, cap_flag_value_t toggle) {
+static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_value_t toggle) {
+  VALUE arrsize, arrelem;
   cap_t caps;
-  cap_value_t set[1];
+  cap_value_t *set;
+  int listsize, i, arrval;
 
   Data_Get_Struct(self, struct _cap_struct, caps);
 
-  Check_Type(cap, T_FIXNUM);
-  //as we bumped our numbers by 1 from the value in the header file.
-  set[0] = FIX2INT(cap) - 1;
+  switch (TYPE(caplist)) {
+    case T_FIXNUM:
+      set = malloc(sizeof(cap_value_t));
+      arrval = FIX2INT(caplist) - 1;
+      listsize = 1; //for use in cap_set_flag
+      if (arrval < CAP_CHOWN || arrval > CAP_LEASE)
+	rb_raise(rb_eArgError, "Invalid capability given in list.");
+      set[0] = arrval;
+      break;
+    case T_ARRAY:
+      arrsize = rb_funcall(caplist, rb_intern("size"), 0);
+      //don't allow user to set more caps at once than there are caps.
+      switch (TYPE(arrsize)) {
+	case T_FIXNUM:
+	  listsize = FIX2INT(arrsize);
+	  if (listsize > CAP_LEASE)
+	    rb_raise(rb_eArgError, "Too many capabilities to set at once.");
 
-  if (cap_set_flag(caps, type, 1, set, toggle) != 0)
+	  set = malloc(listsize * sizeof(cap_value_t));
+	  for (i = 0; i < listsize; i++) {
+	    arrelem = rb_funcall(caplist, rb_intern("[]"), 1, INT2FIX(i));
+	    Check_Type(arrelem, T_FIXNUM);
+	    arrval = FIX2INT(arrelem) - 1;
+	    if (arrval < CAP_CHOWN || arrval > CAP_LEASE)
+	      rb_raise(rb_eArgError, "Invalid capability given in list.");
+
+	    set[i] = arrval;
+	  }
+	  break;
+	default:
+	  rb_raise(rb_eArgError, "Too many capabilities to set at once.");
+	  break;
+      }
+      break;
+  }
+
+  if (cap_set_flag(caps, type, listsize, set, toggle) != 0)
     rb_raise(rb_eSystemCallError, "Error making capability flag change.");
 
   return self;
