@@ -139,8 +139,10 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
 
       arrval = FIX2INT(caplist) - 1;
       listsize = 1; //for use in cap_set_flag
-      if (arrval < CAP_CHOWN || arrval > CAP_LEASE)
+      if (arrval < CAP_CHOWN || arrval > CAP_LEASE) {
+	free(set);  //since exceptions can be caught, we free this now...
 	rb_raise(rb_eArgError, "Invalid capability given in list.");
+      }
       set[0] = arrval;
       break;
     case T_ARRAY:
@@ -159,8 +161,10 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
 	    arrelem = rb_funcall(caplist, rb_intern("[]"), 1, INT2FIX(i));
 	    Check_Type(arrelem, T_FIXNUM);
 	    arrval = FIX2INT(arrelem) - 1;
-	    if (arrval < CAP_CHOWN || arrval > CAP_LEASE)
+	    if (arrval < CAP_CHOWN || arrval > CAP_LEASE) {
+	      free(set);
 	      rb_raise(rb_eArgError, "Invalid capability given in list.");
+	    }
 
 	    set[i] = arrval;
 	  }
@@ -172,8 +176,10 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
       break;
   }
 
-  if (cap_set_flag(caps, type, listsize, set, toggle) != 0)
+  if (cap_set_flag(caps, type, listsize, set, toggle) != 0) {
+    free(set);
     rb_raise(rb_eSystemCallError, "Error making capability flag change.");
+  }
 
   if (set) free(set);
 
