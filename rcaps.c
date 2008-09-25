@@ -18,7 +18,7 @@ Init_rcaps()
   rb_define_method(rb_cCaps, "initialize", caps_init, -1);
   rb_define_method(rb_cCaps, "to_s", caps_to_string, 0);
   rb_define_method(rb_cCaps, "clear", caps_clear, 0);
-  rb_define_method(rb_cCaps, "activate", caps_activate, 0);
+  rb_define_method(rb_cCaps, "set_proc", caps_set_proc, 0);
   rb_define_method(rb_cCaps, "set_effective", caps_SET_EFFECTIVE, 1);
   rb_define_method(rb_cCaps, "clear_effective", caps_CLEAR_EFFECTIVE, 1);
   rb_define_method(rb_cCaps, "set_permitted", caps_SET_PERMITTED, 1);
@@ -111,8 +111,8 @@ static VALUE caps_clear (VALUE self) {
   return self;
 }
 
-// Caps#activate
-static VALUE caps_activate (VALUE self) {
+// Caps#set_proc
+static VALUE caps_set_proc (VALUE self) {
   cap_t caps;
 
   Data_Get_Struct(self, struct _cap_struct, caps);
