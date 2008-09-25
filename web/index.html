@@ -1,0 +1,28 @@
+<html>
+  <head>
+    <title>RCaps - Ruby Capabilities</title>
+  </head>
+  <body>
+    <h1>RCaps - Ruby Capabilities</h1>
+
+    <p>Capabilities are a feature in the Linux kernel among others that are
+    based on the (now withdrawn) POSIX 1003.1e working draft.  They allow for
+    more fine-grained control of a process' abilities (eg: it's not just if
+    $uid == 0 anymore).</p>
+
+    <p>This native extension is a wrapper around libcap for Linux, which gives
+    you the ability to fetch the current capability set (or start with a fresh
+    slate) and modify the set in working memory.  When satisfied, you can then
+    ask the kernel to set this working set as the active capability set for the
+    process.</p>
+
+    <p>You might find this functionality useful if for example you need to run
+    a process that needs the ability to change UID's, but don't want to allow
+    it to bind ports below 1024.  By using Capabilties, you could grant
+    CAP_SETUID and nothing else, thus protecting youself (somewhat, changing
+    UID's is still a powerful privilege) from attack...or more simply,
+    minimizing your attack surface.</p>
+
+    <p>The module is brought to you by: <a href="mailto:&#098;&#100;&#119;&#097;&#108;&#116;&#111;&#110;&#064;&#103;&#109;&#097;&#105;&#108;&#046;&#099;&#111;&#109;">Ben Walton</a>.  The project page is <a href="http://rubyforge.org/projects/rcaps">here</a>.</p>
+  </body>
+</html>
