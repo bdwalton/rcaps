@@ -206,32 +206,49 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
  * Add the Capabilities listed in the first argument array to the effective
  * set.
  */
-CAPTOG(EFFECTIVE,SET);
+static VALUE caps_SET_EFFECTIVE (VALUE self, VALUE cap) {
+  return(captoggle(self, cap, CAP_EFFECTIVE, CAP_SET));
+}
+
 /*
  * Clear the Capabilities listed in the first argument array from the effective
  * set.
  */
-CAPTOG(EFFECTIVE,CLEAR);
+static VALUE caps_CLEAR_EFFECTIVE (VALUE self, VALUE cap) {
+  return(captoggle(self, cap, CAP_EFFECTIVE, CAP_CLEAR));
+}
+
 /*
  * Add the Capabilities listed in the first argument array to the permitted
  * set.
  */
-CAPTOG(PERMITTED,SET);
+static VALUE caps_SET_PERMITTED (VALUE self, VALUE cap) {
+  return(captoggle(self, cap, CAP_PERMITTED, CAP_SET));
+}
+
 /*
  * Clear the Capabilities listed in the first argument array from the permitted
  * set.
  */
-CAPTOG(PERMITTED,CLEAR);
+static VALUE caps_CLEAR_PERMITTED (VALUE self, VALUE cap) {
+  return(captoggle(self, cap, CAP_PERMITTED, CAP_CLEAR));
+}
+
 /*
  * Add the Capabilities listed in the first argument array to the inheritable
  * set.
  */
-CAPTOG(INHERITABLE,SET);
+static VALUE caps_SET_INHERITABLE (VALUE self, VALUE cap) {
+  return(captoggle(self, cap, CAP_INHERITABLE, CAP_SET));
+}
+
 /*
  * Clear the Capabilities listed in the first argument array from the
  * inheritable set.
  */
-CAPTOG(INHERITABLE,CLEAR);
+static VALUE caps_CLEAR_INHERITABLE (VALUE self, VALUE cap) {
+  return(captoggle(self, cap, CAP_INHERITABLE, CAP_CLEAR));
+}
 
 static VALUE capisset (VALUE self, VALUE cap, cap_flag_t flag) {
   cap_t caps;
@@ -247,9 +264,29 @@ static VALUE capisset (VALUE self, VALUE cap, cap_flag_t flag) {
   return (val == CAP_SET ? Qtrue : Qfalse);
 }
 
-CAPQUERY(EFFECTIVE);
-CAPQUERY(PERMITTED);
-CAPQUERY(INHERITABLE);
+/*
+ * Return a boolean response indicating whether a capability is effective or
+ * not within the working set.
+ */
+static VALUE caps_EFFECTIVE (VALUE self, VALUE cap) {\
+  return(capisset(self, cap, CAP_EFFECTIVE));\
+}
+
+/*
+ * Return a boolean response indicating whether a capability is permitted or
+ * not within the working set.
+ */
+static VALUE caps_PERMITTED (VALUE self, VALUE cap) {\
+  return(capisset(self, cap, CAP_PERMITTED));\
+}
+
+/*
+ * Return a boolean response indicating whether a capability is inheritable or
+ * not within the working set.
+ */
+static VALUE caps_INHERITABLE (VALUE self, VALUE cap) {\
+  return(capisset(self, cap, CAP_INHERITABLE));\
+}
 
 static void caps_setup_flags (void) {
   /* these constants are the basis of the enumerated type cap_flag_t */
