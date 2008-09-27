@@ -1,3 +1,82 @@
+/*
+ * = RCaps - Ruby Capabilities
+ *
+ * Manipulate Linux Kernel/Process capabilities from Ruby.
+ *
+ * For information about how capabilities work, see: man 7 capabilities
+ *
+ * Author:: Ben Walton mailto:bdwalton@gmail.com
+ * Copyright:: Copyright (C) 2008, Ben Walton
+ * License:: This code is released under the terms of the GPL v3.
+ *
+ * == Examples
+ *
+ * === Fetch running capabilities and modify them.
+ * require 'rcaps'
+ *
+ * c = Caps.get_proc
+ *
+ * c.set_inheritable([Caps::SETUID])
+ *
+ * c.set_proc
+ *
+ * === Start with capabilities in string form and modify them.
+ * require 'rcaps'
+ *
+ * s = '= cap_chown,cap_setuid+e'
+ *
+ * c = Caps.new(s)
+ *
+ * c.set_permitted([Caps::MKNOD])
+ *
+ * c.set_proc
+ *
+ * === Start with an empty capability set and modify it.
+ * require 'rcaps'
+ *
+ * c = Caps.new
+ *
+ * c.set_permitted([Caps::MKNOD])
+ *
+ * c.set_proc
+ *
+ * === Fetch running capabilities and clear them.
+ * require 'rcaps'
+ *
+ * c = Caps.get_proc
+ *
+ * c.clear
+ *
+ * c.set_proc
+ *
+ * === Fetch running capabilities and ensure a certain capability is not set.
+ * require 'rcaps'
+ *
+ * c = Caps.get_proc
+ *
+ * c.clear_effective([Caps::SETUID])
+ *
+ * c.clear_permitted([Caps::SETUID])
+ *
+ * c.clear_inheritable([Caps::SETUID])
+ *
+ * c.set_proc
+ *
+ * === Strip current capabilities.
+ * require 'rcaps'
+ *
+ * c = Caps.new
+ *
+ * c.set_proc
+ *
+ * === Fetch running capabilities and see if a certain privilege is granted.
+ * require 'rcaps'
+ *
+ * c = Caps.get_proc
+ *
+ * puts "I can change my UID's!" if c.effective?(Caps::SETUID)
+ */
+
 #include "ruby.h"
 #include <sys/capability.h>
 
@@ -40,8 +119,14 @@ static void caps_free (cap_t caps) {
     cap_free(caps);
 }
 
-/* Class/singleton methods */
+// Class/singleton methods
 
+/*
+ * Returns an object representing a capability set in working memory.  If
+ * an argument is passed, it must be a string representing a set of capabilities
+ * in string form.  This is analagous to obtaining a capability set by calling
+ * the C level routine cap_from_text.
+ */
 static VALUE caps_new (int argc, VALUE *argv, VALUE klass) {
   cap_t caps;
   VALUE cdata;
@@ -84,10 +169,13 @@ static VALUE caps_get_proc (VALUE klass) {
   return cdata;
 }
 
-/* Caps instance methods */
+// Caps instance methods
 
 /*
- * Returns a new Caps object with an initial (empty) set of capabilities.
+ * Returns an object representing a capability set in working memory.  If
+ * an argument is passed, it must be a string representing a set of capabilities
+ * in string form.  This is analagous to obtaining a capability set by calling
+ * the C level routine cap_from_text.
  */
 static VALUE caps_init (int argc, VALUE *argv, VALUE self) {
   // we don't do a whole lot here...
@@ -205,6 +293,9 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
 /*
  * Add the Capabilities listed in the first argument array to the effective
  * set.
+ *
+ * p1 must be an array containing Capabilities defined as constants in the Caps
+ * class.
  */
 static VALUE caps_SET_EFFECTIVE (VALUE self, VALUE cap) {
   return(captoggle(self, cap, CAP_EFFECTIVE, CAP_SET));
@@ -213,6 +304,9 @@ static VALUE caps_SET_EFFECTIVE (VALUE self, VALUE cap) {
 /*
  * Clear the Capabilities listed in the first argument array from the effective
  * set.
+ *
+ * p1 must be an array containing Capabilities defined as constants in the Caps
+ * class.
  */
 static VALUE caps_CLEAR_EFFECTIVE (VALUE self, VALUE cap) {
   return(captoggle(self, cap, CAP_EFFECTIVE, CAP_CLEAR));
@@ -221,6 +315,9 @@ static VALUE caps_CLEAR_EFFECTIVE (VALUE self, VALUE cap) {
 /*
  * Add the Capabilities listed in the first argument array to the permitted
  * set.
+ *
+ * p1 must be an array containing Capabilities defined as constants in the Caps
+ * class.
  */
 static VALUE caps_SET_PERMITTED (VALUE self, VALUE cap) {
   return(captoggle(self, cap, CAP_PERMITTED, CAP_SET));
@@ -229,6 +326,9 @@ static VALUE caps_SET_PERMITTED (VALUE self, VALUE cap) {
 /*
  * Clear the Capabilities listed in the first argument array from the permitted
  * set.
+ *
+ * p1 must be an array containing Capabilities defined as constants in the Caps
+ * class.
  */
 static VALUE caps_CLEAR_PERMITTED (VALUE self, VALUE cap) {
   return(captoggle(self, cap, CAP_PERMITTED, CAP_CLEAR));
@@ -237,6 +337,9 @@ static VALUE caps_CLEAR_PERMITTED (VALUE self, VALUE cap) {
 /*
  * Add the Capabilities listed in the first argument array to the inheritable
  * set.
+ *
+ * p1 must be an array containing Capabilities defined as constants in the Caps
+ * class.
  */
 static VALUE caps_SET_INHERITABLE (VALUE self, VALUE cap) {
   return(captoggle(self, cap, CAP_INHERITABLE, CAP_SET));
@@ -245,6 +348,9 @@ static VALUE caps_SET_INHERITABLE (VALUE self, VALUE cap) {
 /*
  * Clear the Capabilities listed in the first argument array from the
  * inheritable set.
+ *
+ * p1 must be an array containing Capabilities defined as constants in the Caps
+ * class.
  */
 static VALUE caps_CLEAR_INHERITABLE (VALUE self, VALUE cap) {
   return(captoggle(self, cap, CAP_INHERITABLE, CAP_CLEAR));
@@ -267,6 +373,8 @@ static VALUE capisset (VALUE self, VALUE cap, cap_flag_t flag) {
 /*
  * Return a boolean response indicating whether a capability is effective or
  * not within the working set.
+ *
+ * p1 is a constant referring to a Capability as defined in the Caps class.
  */
 static VALUE caps_EFFECTIVE (VALUE self, VALUE cap) {\
   return(capisset(self, cap, CAP_EFFECTIVE));\
@@ -275,6 +383,8 @@ static VALUE caps_EFFECTIVE (VALUE self, VALUE cap) {\
 /*
  * Return a boolean response indicating whether a capability is permitted or
  * not within the working set.
+ *
+ * p1 is a constant referring to a Capability as defined in the Caps class.
  */
 static VALUE caps_PERMITTED (VALUE self, VALUE cap) {\
   return(capisset(self, cap, CAP_PERMITTED));\
