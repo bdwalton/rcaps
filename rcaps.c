@@ -413,7 +413,7 @@ static void caps_setup_constants (void) {
   rb_define_const(rb_cCaps, "SYS_PTRACE", INT2FIX(CAP_SYS_PTRACE));
   rb_define_const(rb_cCaps, "SYS_PACCT", INT2FIX(CAP_SYS_PACCT));
   rb_define_const(rb_cCaps, "SYS_ADMIN", INT2FIX(CAP_SYS_ADMIN));
-  rb_define_const(rb_cCaps, "SYS_BOOT", INT2FIX(CAP_SYS_PACCT));
+  rb_define_const(rb_cCaps, "SYS_BOOT", INT2FIX(CAP_SYS_BOOT));
   rb_define_const(rb_cCaps, "SYS_NICE", INT2FIX(CAP_SYS_NICE));
   rb_define_const(rb_cCaps, "SYS_RESOURCE", INT2FIX(CAP_SYS_RESOURCE));
   rb_define_const(rb_cCaps, "SYS_TIME", INT2FIX(CAP_SYS_TIME));
