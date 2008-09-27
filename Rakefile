@@ -7,7 +7,7 @@ CLEAN.include("pkg", "doc")
 
 spec = Gem::Specification.new do |s|
   s.name		= "rcaps"
-  s.version		= "0.8"
+  s.version		= "0.8.5"
   s.author		= "Ben Walton"
   s.email		= "bdwalton@gmail.com"
   s.homepage		= "http://rcaps.rubyforge.org/"
