@@ -113,6 +113,7 @@ static VALUE caps_clear (VALUE self) {
 
 // Caps#set_proc
 static VALUE caps_set_proc (VALUE self) {
+>>>>>>> web:rcaps.c
   cap_t caps;
 
   Data_Get_Struct(self, struct _cap_struct, caps);
