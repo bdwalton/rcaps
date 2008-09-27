@@ -108,8 +108,7 @@ Init_rcaps()
   rb_define_method(rb_cCaps, "permitted?", caps_PERMITTED, 1);
   rb_define_method(rb_cCaps, "inheritable?", caps_INHERITABLE, 1);
 
-  /* add flags and capability names */
-  caps_setup_flags();
+  /* add capability names as contants to the class */
   caps_setup_constants();
 }
 
@@ -236,47 +235,33 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
 
   Data_Get_Struct(self, struct _cap_struct, caps);
 
-  switch (TYPE(caplist)) {
+  Check_Type(caplist, T_ARRAY);
+
+  arrsize = rb_funcall(caplist, rb_intern("size"), 0);
+  //don't allow user to set more caps at once than there are caps.
+  switch (TYPE(arrsize)) {
     case T_FIXNUM:
-      if ((set = malloc(sizeof(cap_value_t))) == NULL)
+      listsize = FIX2INT(arrsize);
+      if (listsize > CAP_LEASE)
+	rb_raise(rb_eArgError, "Too many capabilities to set at once.");
+
+      if ((set = malloc(listsize * sizeof(cap_value_t))) == NULL)
 	rb_raise(rb_eSystemCallError, "Error allocating memory.");
 
-      arrval = FIX2INT(caplist);
-      listsize = 1; //for use in cap_set_flag
-      if (arrval < CAP_CHOWN || arrval > CAP_LEASE) {
-	free(set);  //since exceptions can be caught, we free this now...
-	rb_raise(rb_eArgError, "Invalid capability given in list.");
+      for (i = 0; i < listsize; i++) {
+	arrelem = rb_funcall(caplist, rb_intern("[]"), 1, INT2FIX(i));
+	Check_Type(arrelem, T_FIXNUM);
+	arrval = FIX2INT(arrelem);
+	if (arrval < CAP_CHOWN || arrval > CAP_LEASE) {
+	  free(set);
+	  rb_raise(rb_eArgError, "Invalid capability given in list.");
+	}
+
+	set[i] = arrval;
       }
-      set[0] = arrval;
       break;
-    case T_ARRAY:
-      arrsize = rb_funcall(caplist, rb_intern("size"), 0);
-      //don't allow user to set more caps at once than there are caps.
-      switch (TYPE(arrsize)) {
-	case T_FIXNUM:
-	  listsize = FIX2INT(arrsize);
-	  if (listsize > CAP_LEASE)
-	    rb_raise(rb_eArgError, "Too many capabilities to set at once.");
-
-	  if ((set = malloc(listsize * sizeof(cap_value_t))) == NULL)
-	    rb_raise(rb_eSystemCallError, "Error allocating memory.");
-
-	  for (i = 0; i < listsize; i++) {
-	    arrelem = rb_funcall(caplist, rb_intern("[]"), 1, INT2FIX(i));
-	    Check_Type(arrelem, T_FIXNUM);
-	    arrval = FIX2INT(arrelem);
-	    if (arrval < CAP_CHOWN || arrval > CAP_LEASE) {
-	      free(set);
-	      rb_raise(rb_eArgError, "Invalid capability given in list.");
-	    }
-
-	    set[i] = arrval;
-	  }
-	  break;
-	default:
-	  rb_raise(rb_eArgError, "Too many capabilities to set at once.");
-	  break;
-      }
+    default: //if we're a bignum, we're way too large...
+      rb_raise(rb_eArgError, "Too many capabilities to set at once.");
       break;
   }
 
@@ -393,16 +378,11 @@ static VALUE caps_PERMITTED (VALUE self, VALUE cap) {\
 /*
  * Return a boolean response indicating whether a capability is inheritable or
  * not within the working set.
+ *
+ * p1 is a constant referring to a Capability as defined in the Caps class.
  */
 static VALUE caps_INHERITABLE (VALUE self, VALUE cap) {\
   return(capisset(self, cap, CAP_INHERITABLE));\
-}
-
-static void caps_setup_flags (void) {
-  /* these constants are the basis of the enumerated type cap_flag_t */
-  rb_define_const(rb_cCaps, "EFFECTIVE", INT2FIX(CAP_EFFECTIVE));
-  rb_define_const(rb_cCaps, "PERMITTED", INT2FIX(CAP_PERMITTED));
-  rb_define_const(rb_cCaps, "INHERITABLE", INT2FIX(CAP_INHERITABLE));
 }
 
 static void caps_setup_constants (void) {
