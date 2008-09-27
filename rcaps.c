@@ -153,7 +153,7 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
       if ((set = malloc(sizeof(cap_value_t))) == NULL)
 	rb_raise(rb_eSystemCallError, "Error allocating memory.");
 
-      arrval = FIX2INT(caplist) - 1;
+      arrval = FIX2INT(caplist);
       listsize = 1; //for use in cap_set_flag
       if (arrval < CAP_CHOWN || arrval > CAP_LEASE) {
 	free(set);  //since exceptions can be caught, we free this now...
@@ -176,7 +176,7 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
 	  for (i = 0; i < listsize; i++) {
 	    arrelem = rb_funcall(caplist, rb_intern("[]"), 1, INT2FIX(i));
 	    Check_Type(arrelem, T_FIXNUM);
-	    arrval = FIX2INT(arrelem) - 1;
+	    arrval = FIX2INT(arrelem);
 	    if (arrval < CAP_CHOWN || arrval > CAP_LEASE) {
 	      free(set);
 	      rb_raise(rb_eArgError, "Invalid capability given in list.");
@@ -302,32 +302,32 @@ static void caps_setup_constants (void) {
   //NOTE: We increase the numbers defined in the header by 1 so that we
   //can make user submitted sets of these capabilities easer to manipulate
   //for our own purposes (and thus easier for the user to set in batches)
-  rb_define_const(rb_cCaps, "CHOWN", INT2FIX(CAP_CHOWN + 1));
-  rb_define_const(rb_cCaps, "DAC_OVERRIDE", INT2FIX(CAP_DAC_OVERRIDE + 1));
-  rb_define_const(rb_cCaps, "DAC_READ_SEARCH", INT2FIX(CAP_DAC_READ_SEARCH + 1));
-  rb_define_const(rb_cCaps, "FOWNER", INT2FIX(CAP_FOWNER + 1));
-  rb_define_const(rb_cCaps, "FSETID", INT2FIX(CAP_FSETID + 1));
-  rb_define_const(rb_cCaps, "KILL", INT2FIX(CAP_KILL + 1));
-  rb_define_const(rb_cCaps, "SETGID", INT2FIX(CAP_SETGID + 1));
-  rb_define_const(rb_cCaps, "SETUID", INT2FIX(CAP_SETUID + 1));
-  rb_define_const(rb_cCaps, "LINUX_IMMUTABLE", INT2FIX(CAP_LINUX_IMMUTABLE + 1));
-  rb_define_const(rb_cCaps, "NET_BIND_SERVICE", INT2FIX(CAP_NET_BIND_SERVICE + 1));
-  rb_define_const(rb_cCaps, "NET_BROADCAST", INT2FIX(CAP_NET_BROADCAST + 1));
-  rb_define_const(rb_cCaps, "NET_ADMIN", INT2FIX(CAP_NET_ADMIN + 1));
-  rb_define_const(rb_cCaps, "NET_RAW", INT2FIX(CAP_NET_RAW + 1));
-  rb_define_const(rb_cCaps, "IPC_LOCK", INT2FIX(CAP_IPC_LOCK + 1));
-  rb_define_const(rb_cCaps, "IPC_OWNER", INT2FIX(CAP_IPC_OWNER + 1));
-  rb_define_const(rb_cCaps, "SYS_MODULE", INT2FIX(CAP_SYS_MODULE + 1));
-  rb_define_const(rb_cCaps, "SYS_RAWIO", INT2FIX(CAP_SYS_RAWIO + 1));
-  rb_define_const(rb_cCaps, "SYS_CHROOT", INT2FIX(CAP_SYS_CHROOT + 1));
-  rb_define_const(rb_cCaps, "SYS_PTRACE", INT2FIX(CAP_SYS_PTRACE + 1));
-  rb_define_const(rb_cCaps, "SYS_PACCT", INT2FIX(CAP_SYS_PACCT + 1));
-  rb_define_const(rb_cCaps, "SYS_ADMIN", INT2FIX(CAP_SYS_ADMIN + 1));
-  rb_define_const(rb_cCaps, "SYS_BOOT", INT2FIX(CAP_SYS_PACCT + 1));
-  rb_define_const(rb_cCaps, "SYS_NICE", INT2FIX(CAP_SYS_NICE + 1));
-  rb_define_const(rb_cCaps, "SYS_RESOURCE", INT2FIX(CAP_SYS_RESOURCE + 1));
-  rb_define_const(rb_cCaps, "SYS_TIME", INT2FIX(CAP_SYS_TIME + 1));
-  rb_define_const(rb_cCaps, "SYS_TTY_CONFIG", INT2FIX(CAP_SYS_TTY_CONFIG + 1));
-  rb_define_const(rb_cCaps, "MKNOD", INT2FIX(CAP_MKNOD + 1));
-  rb_define_const(rb_cCaps, "LEASE", INT2FIX(CAP_LEASE + 1));
+  rb_define_const(rb_cCaps, "CHOWN", INT2FIX(CAP_CHOWN));
+  rb_define_const(rb_cCaps, "DAC_OVERRIDE", INT2FIX(CAP_DAC_OVERRIDE));
+  rb_define_const(rb_cCaps, "DAC_READ_SEARCH", INT2FIX(CAP_DAC_READ_SEARCH));
+  rb_define_const(rb_cCaps, "FOWNER", INT2FIX(CAP_FOWNER));
+  rb_define_const(rb_cCaps, "FSETID", INT2FIX(CAP_FSETID));
+  rb_define_const(rb_cCaps, "KILL", INT2FIX(CAP_KILL));
+  rb_define_const(rb_cCaps, "SETGID", INT2FIX(CAP_SETGID));
+  rb_define_const(rb_cCaps, "SETUID", INT2FIX(CAP_SETUID));
+  rb_define_const(rb_cCaps, "LINUX_IMMUTABLE", INT2FIX(CAP_LINUX_IMMUTABLE));
+  rb_define_const(rb_cCaps, "NET_BIND_SERVICE", INT2FIX(CAP_NET_BIND_SERVICE));
+  rb_define_const(rb_cCaps, "NET_BROADCAST", INT2FIX(CAP_NET_BROADCAST));
+  rb_define_const(rb_cCaps, "NET_ADMIN", INT2FIX(CAP_NET_ADMIN));
+  rb_define_const(rb_cCaps, "NET_RAW", INT2FIX(CAP_NET_RAW));
+  rb_define_const(rb_cCaps, "IPC_LOCK", INT2FIX(CAP_IPC_LOCK));
+  rb_define_const(rb_cCaps, "IPC_OWNER", INT2FIX(CAP_IPC_OWNER));
+  rb_define_const(rb_cCaps, "SYS_MODULE", INT2FIX(CAP_SYS_MODULE));
+  rb_define_const(rb_cCaps, "SYS_RAWIO", INT2FIX(CAP_SYS_RAWIO));
+  rb_define_const(rb_cCaps, "SYS_CHROOT", INT2FIX(CAP_SYS_CHROOT));
+  rb_define_const(rb_cCaps, "SYS_PTRACE", INT2FIX(CAP_SYS_PTRACE));
+  rb_define_const(rb_cCaps, "SYS_PACCT", INT2FIX(CAP_SYS_PACCT));
+  rb_define_const(rb_cCaps, "SYS_ADMIN", INT2FIX(CAP_SYS_ADMIN));
+  rb_define_const(rb_cCaps, "SYS_BOOT", INT2FIX(CAP_SYS_PACCT));
+  rb_define_const(rb_cCaps, "SYS_NICE", INT2FIX(CAP_SYS_NICE));
+  rb_define_const(rb_cCaps, "SYS_RESOURCE", INT2FIX(CAP_SYS_RESOURCE));
+  rb_define_const(rb_cCaps, "SYS_TIME", INT2FIX(CAP_SYS_TIME));
+  rb_define_const(rb_cCaps, "SYS_TTY_CONFIG", INT2FIX(CAP_SYS_TTY_CONFIG));
+  rb_define_const(rb_cCaps, "MKNOD", INT2FIX(CAP_MKNOD));
+  rb_define_const(rb_cCaps, "LEASE", INT2FIX(CAP_LEASE));
 }
