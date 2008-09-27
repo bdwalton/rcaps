@@ -3,7 +3,7 @@ Gem::manage_gems
 require 'rake/gempackagetask'
 require 'rake/clean'
 
-CLEAN.include("pkg", "doc")
+CLEAN.include("pkg", "doc", "Makefile", "*.so", "*.o")
 
 spec = Gem::Specification.new do |s|
   s.name		= "rcaps"
