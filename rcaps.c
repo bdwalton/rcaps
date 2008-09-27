@@ -349,7 +349,7 @@ static VALUE capisset (VALUE self, VALUE cap, cap_flag_t flag) {
 
   Check_Type(cap, T_FIXNUM);
 
-  if (cap_get_flag(caps, FIX2INT(cap) - 1, flag, &val) != 0)
+  if (cap_get_flag(caps, FIX2INT(cap), flag, &val) != 0)
     rb_raise(rb_eSystemCallError, "Error retrieving capability status.");
 
   return (val == CAP_SET ? Qtrue : Qfalse);
