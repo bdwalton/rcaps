@@ -3,6 +3,5 @@
 test.rb
 pkg/*
 Makefile
-web
 mkmf.log
 doc/*
