@@ -1,0 +1,715 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html 
+     PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+     "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Class: Caps</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
+  <meta http-equiv="Content-Script-Type" content="text/javascript" />
+  <link rel="stylesheet" href=".././rdoc-style.css" type="text/css" media="screen" />
+  <script type="text/javascript">
+  // <![CDATA[
+
+  function popupCode( url ) {
+    window.open(url, "Code", "resizable=yes,scrollbars=yes,toolbar=no,status=no,height=150,width=400")
+  }
+
+  function toggleCode( id ) {
+    if ( document.getElementById )
+      elem = document.getElementById( id );
+    else if ( document.all )
+      elem = eval( "document.all." + id );
+    else
+      return false;
+
+    elemStyle = elem.style;
+    
+    if ( elemStyle.display != "block" ) {
+      elemStyle.display = "block"
+    } else {
+      elemStyle.display = "none"
+    }
+
+    return true;
+  }
+  
+  // Make codeblocks hidden by default
+  document.writeln( "<style type=\"text/css\">div.method-source-code { display: none }</style>" )
+  
+  // ]]>
+  </script>
+
+</head>
+<body>
+
+
+
+    <div id="classHeader">
+        <table class="header-table">
+        <tr class="top-aligned-row">
+          <td><strong>Class</strong></td>
+          <td class="class-name-in-header">Caps</td>
+        </tr>
+        <tr class="top-aligned-row">
+            <td><strong>In:</strong></td>
+            <td>
+                <a href="../files/rcaps_c.html">
+                rcaps.c
+                </a>
+        <br />
+            </td>
+        </tr>
+
+        <tr class="top-aligned-row">
+            <td><strong>Parent:</strong></td>
+            <td>
+                Object
+            </td>
+        </tr>
+        </table>
+    </div>
+  <!-- banner header -->
+
+  <div id="bodyContent">
+
+
+
+  <div id="contextContent">
+
+    <div id="description">
+      <h1>RCaps - Ruby Capabilities</h1>
+<p>
+Manipulate Linux Kernel/Process capabilities from Ruby.
+</p>
+<p>
+For information about how capabilities work, see: man 7 capabilities
+</p>
+<table>
+<tr><td valign="top">Author:</td><td>Ben Walton <a href="mailto:bdwalton@gmail.com">bdwalton@gmail.com</a>
+
+</td></tr>
+<tr><td valign="top">Copyright:</td><td>Copyright (C) 2008, Ben Walton
+
+</td></tr>
+<tr><td valign="top">License:</td><td>This code is released under the terms of the GPL v3.
+
+</td></tr>
+</table>
+<h2>Examples</h2>
+<h3>Fetch running capabilities and modify them.</h3>
+<p>
+require &#8216;rcaps&#8216;
+</p>
+<p>
+c = <a href="Caps.html#M000002">Caps.get_proc</a>
+</p>
+<p>
+c.set_inheritable([Caps::SETUID])
+</p>
+<p>
+c.set_proc
+</p>
+<h3>Start with capabilities in string form and modify them.</h3>
+<p>
+require &#8216;rcaps&#8216;
+</p>
+<p>
+s = &#8217;= cap_chown,cap_setuid+e&#8216;
+</p>
+<p>
+c = <a href="Caps.html#M000001">Caps.new(s)</a>
+</p>
+<p>
+c.set_permitted([Caps::MKNOD])
+</p>
+<p>
+c.set_proc
+</p>
+<h3>Start with an empty capability set and modify it.</h3>
+<p>
+require &#8216;rcaps&#8216;
+</p>
+<p>
+c = <a href="Caps.html#M000001">Caps.new</a>
+</p>
+<p>
+c.set_permitted([Caps::MKNOD])
+</p>
+<p>
+c.set_proc
+</p>
+<h3>Fetch running capabilities and <a href="Caps.html#M000005">clear</a> them.</h3>
+<p>
+require &#8216;rcaps&#8216;
+</p>
+<p>
+c = <a href="Caps.html#M000002">Caps.get_proc</a>
+</p>
+<p>
+c.clear
+</p>
+<p>
+c.set_proc
+</p>
+<h3>Fetch running capabilities and ensure a certain capability is not set.</h3>
+<p>
+require &#8216;rcaps&#8216;
+</p>
+<p>
+c = <a href="Caps.html#M000002">Caps.get_proc</a>
+</p>
+<p>
+c.clear_effective([Caps::SETUID])
+</p>
+<p>
+c.clear_permitted([Caps::SETUID])
+</p>
+<p>
+c.clear_inheritable([Caps::SETUID])
+</p>
+<p>
+c.set_proc
+</p>
+<h3>Strip current capabilities.</h3>
+<p>
+require &#8216;rcaps&#8216;
+</p>
+<p>
+c = <a href="Caps.html#M000001">Caps.new</a>
+</p>
+<p>
+c.set_proc
+</p>
+<h3>Fetch running capabilities and see if a certain privilege is granted.</h3>
+<p>
+require &#8216;rcaps&#8216;
+</p>
+<p>
+c = <a href="Caps.html#M000002">Caps.get_proc</a>
+</p>
+<p>
+puts &quot;I can change my UID&#8216;s!&quot; if c.effective?(Caps::SETUID)
+</p>
+
+    </div>
+
+
+   </div>
+
+    <div id="method-list">
+      <h3 class="section-bar">Methods</h3>
+
+      <div class="name-list">
+      <a href="#M000005">clear</a>&nbsp;&nbsp;
+      <a href="#M000008">clear_effective</a>&nbsp;&nbsp;
+      <a href="#M000012">clear_inheritable</a>&nbsp;&nbsp;
+      <a href="#M000010">clear_permitted</a>&nbsp;&nbsp;
+      <a href="#M000013">effective?</a>&nbsp;&nbsp;
+      <a href="#M000002">get_proc</a>&nbsp;&nbsp;
+      <a href="#M000015">inheritable?</a>&nbsp;&nbsp;
+      <a href="#M000001">new</a>&nbsp;&nbsp;
+      <a href="#M000003">new</a>&nbsp;&nbsp;
+      <a href="#M000014">permitted?</a>&nbsp;&nbsp;
+      <a href="#M000007">set_effective</a>&nbsp;&nbsp;
+      <a href="#M000011">set_inheritable</a>&nbsp;&nbsp;
+      <a href="#M000009">set_permitted</a>&nbsp;&nbsp;
+      <a href="#M000006">set_proc</a>&nbsp;&nbsp;
+      <a href="#M000004">to_s</a>&nbsp;&nbsp;
+      </div>
+    </div>
+
+  </div>
+
+
+    <!-- if includes -->
+
+    <div id="section">
+
+
+    <div id="constants-list">
+      <h3 class="section-bar">Constants</h3>
+
+      <div class="name-list">
+        <table summary="Constants">
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">CHOWN</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_CHOWN)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DAC_OVERRIDE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_DAC_OVERRIDE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">DAC_READ_SEARCH</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_DAC_READ_SEARCH)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FOWNER</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_FOWNER)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">FSETID</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_FSETID)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">KILL</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_KILL)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SETGID</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SETGID)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SETUID</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SETUID)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">LINUX_IMMUTABLE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_LINUX_IMMUTABLE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NET_BIND_SERVICE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_NET_BIND_SERVICE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NET_BROADCAST</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_NET_BROADCAST)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NET_ADMIN</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_NET_ADMIN)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">NET_RAW</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_NET_RAW)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">IPC_LOCK</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_IPC_LOCK)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">IPC_OWNER</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_IPC_OWNER)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_MODULE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_MODULE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_RAWIO</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_RAWIO)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_CHROOT</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_CHROOT)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_PTRACE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_PTRACE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_PACCT</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_PACCT)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_ADMIN</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_ADMIN)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_BOOT</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_PACCT)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_NICE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_NICE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_RESOURCE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_RESOURCE)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_TIME</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_TIME)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">SYS_TTY_CONFIG</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_TTY_CONFIG)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">MKNOD</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_MKNOD)</td>
+        </tr>
+        <tr class="top-aligned-row context-row">
+          <td class="context-item-name">LEASE</td>
+          <td>=</td>
+          <td class="context-item-value">INT2FIX(CAP_LEASE)</td>
+        </tr>
+        </table>
+      </div>
+    </div>
+
+
+
+      
+
+
+    <!-- if method_list -->
+    <div id="methods">
+      <h3 class="section-bar">Public Class methods</h3>
+
+      <div id="method-M000002" class="method-detail">
+        <a name="M000002"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000002.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000002.html');return false;">
+          <span class="method-name">get_proc</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a <a href="Caps.html#M000001">new</a> <a href="Caps.html">Caps</a>
+object initialized with the set of capabilities from the currently running
+process.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000001" class="method-detail">
+        <a name="M000001"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000001.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000001.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an object representing a capability set in working memory. If an
+argument is passed, it must be a string representing a set of capabilities
+in string form. This is analagous to obtaining a capability set by calling
+the C level routine cap_from_text.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000003" class="method-detail">
+        <a name="M000003"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000003.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000003.html');return false;">
+          <span class="method-name">new</span><span class="method-args">(...)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns an object representing a capability set in working memory. If an
+argument is passed, it must be a string representing a set of capabilities
+in string form. This is analagous to obtaining a capability set by calling
+the C level routine cap_from_text.
+</p>
+        </div>
+      </div>
+
+      <h3 class="section-bar">Public Instance methods</h3>
+
+      <div id="method-M000005" class="method-detail">
+        <a name="M000005"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000005.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000005.html');return false;">
+          <span class="method-name">clear</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Removes all capabilties from the <a href="Caps.html">Caps</a> object. This
+is analogous to the C level function cap_clear.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000008" class="method-detail">
+        <a name="M000008"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000008.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000008.html');return false;">
+          <span class="method-name">clear_effective</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Clear the Capabilities listed in the first argument array from the
+effective set.
+</p>
+<p>
+p1 must be an array containing Capabilities defined as constants in the <a
+href="Caps.html">Caps</a> class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000012" class="method-detail">
+        <a name="M000012"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000012.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000012.html');return false;">
+          <span class="method-name">clear_inheritable</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Clear the Capabilities listed in the first argument array from the
+inheritable set.
+</p>
+<p>
+p1 must be an array containing Capabilities defined as constants in the <a
+href="Caps.html">Caps</a> class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000010" class="method-detail">
+        <a name="M000010"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000010.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000010.html');return false;">
+          <span class="method-name">clear_permitted</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Clear the Capabilities listed in the first argument array from the
+permitted set.
+</p>
+<p>
+p1 must be an array containing Capabilities defined as constants in the <a
+href="Caps.html">Caps</a> class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000013" class="method-detail">
+        <a name="M000013"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000013.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000013.html');return false;">
+          <span class="method-name">effective?</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a boolean response indicating whether a capability is effective or
+not within the working set.
+</p>
+<p>
+p1 is a constant referring to a Capability as defined in the <a
+href="Caps.html">Caps</a> class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000015" class="method-detail">
+        <a name="M000015"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000015.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000015.html');return false;">
+          <span class="method-name">inheritable?</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a boolean response indicating whether a capability is inheritable or
+not within the working set.
+</p>
+<p>
+p1 is a constant referring to a Capability as defined in the <a
+href="Caps.html">Caps</a> class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000014" class="method-detail">
+        <a name="M000014"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000014.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000014.html');return false;">
+          <span class="method-name">permitted?</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Return a boolean response indicating whether a capability is permitted or
+not within the working set.
+</p>
+<p>
+p1 is a constant referring to a Capability as defined in the <a
+href="Caps.html">Caps</a> class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000007" class="method-detail">
+        <a name="M000007"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000007.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000007.html');return false;">
+          <span class="method-name">set_effective</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add the Capabilities listed in the first argument array to the effective
+set.
+</p>
+<p>
+p1 must be an array containing Capabilities defined as constants in the <a
+href="Caps.html">Caps</a> class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000011" class="method-detail">
+        <a name="M000011"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000011.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000011.html');return false;">
+          <span class="method-name">set_inheritable</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add the Capabilities listed in the first argument array to the inheritable
+set.
+</p>
+<p>
+p1 must be an array containing Capabilities defined as constants in the <a
+href="Caps.html">Caps</a> class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000009" class="method-detail">
+        <a name="M000009"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000009.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000009.html');return false;">
+          <span class="method-name">set_permitted</span><span class="method-args">(p1)</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Add the Capabilities listed in the first argument array to the permitted
+set.
+</p>
+<p>
+p1 must be an array containing Capabilities defined as constants in the <a
+href="Caps.html">Caps</a> class.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000006" class="method-detail">
+        <a name="M000006"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000006.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000006.html');return false;">
+          <span class="method-name">set_proc</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Install the <a href="Caps.html">Caps</a> object into the kernel. This is
+analogous to the C level function cap_set_proc.
+</p>
+        </div>
+      </div>
+
+      <div id="method-M000004" class="method-detail">
+        <a name="M000004"></a>
+
+        <div class="method-heading">
+          <a href="Caps.src/M000004.html" target="Code" class="method-signature"
+            onclick="popupCode('Caps.src/M000004.html');return false;">
+          <span class="method-name">to_s</span><span class="method-args">()</span>
+          </a>
+        </div>
+      
+        <div class="method-description">
+          <p>
+Returns a String object that contains the text representation of the <a
+href="Caps.html">Caps</a> object. This is analagous to the C level function
+cap_to_text.
+</p>
+        </div>
+      </div>
+
+
+    </div>
+
+
+  </div>
+
+
+<div id="validator-badges">
+  <p><small><a href="http://validator.w3.org/check/referer">[Validate]</a></small></p>
+</div>
+
+</body>
+</html>
