@@ -63,6 +63,10 @@ static VALUE caps_new (int argc, VALUE *argv, VALUE klass) {
   return cdata;
 }
 
+/*
+ * Returns a new Caps object initialized with the set of capabilities from
+ * the currently running process.
+ */
 static VALUE caps_get_proc (VALUE klass) {
   cap_t caps;
   VALUE cdata;
@@ -82,12 +86,18 @@ static VALUE caps_get_proc (VALUE klass) {
 
 /* Caps instance methods */
 
+/*
+ * Returns a new Caps object with an initial (empty) set of capabilities.
+ */
 static VALUE caps_init (int argc, VALUE *argv, VALUE self) {
   // we don't do a whole lot here...
   return self;
 }
 
-// Caps#to_s implementation
+/*
+ * Returns a String object that contains the text representation of the
+ * Caps object.  This is analagous to the C level function cap_to_text.
+ */
 static VALUE caps_to_string (VALUE self) {
   cap_t caps;
   char *text;
@@ -98,7 +108,10 @@ static VALUE caps_to_string (VALUE self) {
   return rb_str_new2(text);
 }
 
-// Caps#clear
+/*
+ * Removes all capabilties from the Caps object.  This is analogous to the C
+ * level function cap_clear.
+ */
 static VALUE caps_clear (VALUE self) {
   cap_t caps;
 
@@ -111,9 +124,11 @@ static VALUE caps_clear (VALUE self) {
   return self;
 }
 
-// Caps#set_proc
+/*
+ * Install the Caps object into the kernel.  This is analogous to the C level
+ * function cap_set_proc.
+ */
 static VALUE caps_set_proc (VALUE self) {
->>>>>>> web:rcaps.c
   cap_t caps;
 
   Data_Get_Struct(self, struct _cap_struct, caps);
@@ -187,11 +202,35 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
   return self;
 }
 
+/*
+ * Add the Capabilities listed in the first argument array to the effective
+ * set.
+ */
 CAPTOG(EFFECTIVE,SET);
+/*
+ * Clear the Capabilities listed in the first argument array from the effective
+ * set.
+ */
 CAPTOG(EFFECTIVE,CLEAR);
+/*
+ * Add the Capabilities listed in the first argument array to the permitted
+ * set.
+ */
 CAPTOG(PERMITTED,SET);
+/*
+ * Clear the Capabilities listed in the first argument array from the permitted
+ * set.
+ */
 CAPTOG(PERMITTED,CLEAR);
+/*
+ * Add the Capabilities listed in the first argument array to the inheritable
+ * set.
+ */
 CAPTOG(INHERITABLE,SET);
+/*
+ * Clear the Capabilities listed in the first argument array from the
+ * inheritable set.
+ */
 CAPTOG(INHERITABLE,CLEAR);
 
 static VALUE capisset (VALUE self, VALUE cap, cap_flag_t flag) {
