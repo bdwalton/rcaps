@@ -87,7 +87,6 @@ static VALUE rb_cCaps;
 Init_rcaps()
 {
   rb_cCaps = rb_define_class("Caps", rb_cObject);
-  //rb_define_alloc_func(rb_cCaps, caps_allocate);
 
   /* Caps class methods */
   rb_define_singleton_method(rb_cCaps, "new", caps_new, -1);
@@ -112,8 +111,7 @@ Init_rcaps()
   caps_setup_constants();
 }
 
-/* Housekeeping for the GC */
-//how to destruct a Caps object
+// Housekeeping for the GC
 static void caps_free (cap_t caps) {
     cap_free(caps);
 }
@@ -386,12 +384,8 @@ static VALUE caps_INHERITABLE (VALUE self, VALUE cap) {\
 }
 
 static void caps_setup_constants (void) {
-  /* these constants represent capabilities that may be toggled in on/off
+  /* these constants represent capabilities that may be toggled on/off
    * in one of the sets of cap_flag_t enumerated list */
-
-  //NOTE: We increase the numbers defined in the header by 1 so that we
-  //can make user submitted sets of these capabilities easer to manipulate
-  //for our own purposes (and thus easier for the user to set in batches)
   rb_define_const(rb_cCaps, "CHOWN", INT2FIX(CAP_CHOWN));
   rb_define_const(rb_cCaps, "DAC_OVERRIDE", INT2FIX(CAP_DAC_OVERRIDE));
   rb_define_const(rb_cCaps, "DAC_READ_SEARCH", INT2FIX(CAP_DAC_READ_SEARCH));
