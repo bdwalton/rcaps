@@ -21,6 +21,8 @@ class TestCaps < Test::Unit::TestCase
     assert_nothing_raised { c = Caps.get_proc }
     c = Caps.get_proc
     assert_kind_of(Caps, c)
+    #this assumption is based on not being root or having capabilities already
+    #granted to our process...
     assert_equal('=', c.to_s)
   end
 
