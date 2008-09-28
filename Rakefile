@@ -7,7 +7,7 @@ CLEAN.include("pkg", "doc", "Makefile", "*.so", "*.o")
 
 spec = Gem::Specification.new do |s|
   s.name		= "rcaps"
-  s.version		= "0.9.5"
+  s.version		= "0.9.9"
   s.author		= "Ben Walton"
   s.email		= "bdwalton@gmail.com"
   s.homepage		= "http://rcaps.rubyforge.org/"
