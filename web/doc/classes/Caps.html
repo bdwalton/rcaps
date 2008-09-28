@@ -237,6 +237,12 @@ puts &quot;I can change my UID&#8216;s!&quot; if c.effective?(Caps::SETUID)
           <td class="context-item-name">CHOWN</td>
           <td>=</td>
           <td class="context-item-value">INT2FIX(CAP_CHOWN)</td>
+          <td width="3em">&nbsp;</td>
+          <td class="context-item-desc">
+these constants represent capabilities that may be toggled on/off in one of
+the sets of cap_flag_t enumerated list
+
+</td>
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">DAC_OVERRIDE</td>
@@ -341,7 +347,7 @@ puts &quot;I can change my UID&#8216;s!&quot; if c.effective?(Caps::SETUID)
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">SYS_BOOT</td>
           <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_PACCT)</td>
+          <td class="context-item-value">INT2FIX(CAP_SYS_BOOT)</td>
         </tr>
         <tr class="top-aligned-row context-row">
           <td class="context-item-name">SYS_NICE</td>
