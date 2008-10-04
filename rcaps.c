@@ -126,15 +126,15 @@ static void caps_free (cap_t caps) {
  */
 static VALUE caps_new (int argc, VALUE *argv, VALUE klass) {
   cap_t caps;
-  VALUE cdata;
+  VALUE cdata, capstring;
 
-  if (argc < 1) {
+  rb_scan_args(argc, argv, "01", &capstring);
+
+  if (NIL_P(capstring)) {
     caps = cap_init();
-  } else if (argc > 1) {
-    rb_raise(rb_eArgError, "Too many arguments (1 expected)");
   } else {
-    Check_Type(argv[0], T_STRING);
-    caps = cap_from_text(StringValuePtr(argv[0]));
+    Check_Type(capstring, T_STRING);
+    caps = cap_from_text(StringValuePtr(capstring));
     if (!caps)
       rb_sys_fail("Bad capability text argument");
   }
