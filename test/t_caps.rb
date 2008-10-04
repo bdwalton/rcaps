@@ -26,6 +26,11 @@ class TestCaps < Test::Unit::TestCase
     assert_equal('=', c.to_s)
   end
 
+  def test_init_args
+    assert_raises(TypeError) { c = Caps.new(1) }
+    assert_raises(ArgumentError) { c = Caps.new('=', 1) }
+  end
+
   def test_clear
     s = '= cap_setuid+e'
     c = Caps.new(s)
@@ -94,6 +99,6 @@ class TestCaps < Test::Unit::TestCase
     #fail.  we must either be root already of have somehow been granted this
     #privilege.  for lack of something similar to libfakeroot for capabilities,
     #we'll just ensure this fails for testing purposes.
-    assert_raises(SystemCallError) { c.set_proc }
+    assert_raises(Errno::EPERM) { c.set_proc }
   end
 end
