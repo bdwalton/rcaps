@@ -131,12 +131,12 @@ static VALUE caps_new (int argc, VALUE *argv, VALUE klass) {
   if (argc < 1) {
     caps = cap_init();
   } else if (argc > 1) {
-    rb_raise(rb_eArgError, "More than one argument to new()");
+    rb_raise(rb_eArgError, "Too many arguments (1 expected)");
   } else {
     Check_Type(argv[0], T_STRING);
     caps = cap_from_text(StringValuePtr(argv[0]));
     if (!caps)
-      rb_raise(rb_eArgError, "Invalid capability text definition passed to new()");
+      rb_sys_fail("Bad capability text argument");
   }
 
   cdata = Data_Wrap_Struct(klass, 0, caps_free, caps);
@@ -155,7 +155,7 @@ static VALUE caps_get_proc (VALUE klass) {
   VALUE argv[1];
 
   if ((caps = cap_get_proc()) == NULL)
-    rb_raise(rb_eSystemCallError, "Error retrieving active capabilties.");
+    rb_sys_fail("Error retrieving active capabilties");
 
   //as this is just a convenience wrapper instead of new(), we still
   //want to call initialize.
@@ -204,7 +204,7 @@ static VALUE caps_clear (VALUE self) {
   Data_Get_Struct(self, struct _cap_struct, caps);
 
   if (cap_clear(caps) != 0)
-    rb_raise(rb_eSystemCallError, "Error clearing capability set.");
+    rb_sys_fail("Error clearing capability set.");
 
   return self;
 }
@@ -219,7 +219,7 @@ static VALUE caps_set_proc (VALUE self) {
   Data_Get_Struct(self, struct _cap_struct, caps);
 
   if (cap_set_proc(caps) != 0)
-    rb_raise(rb_eSystemCallError, "Error installing capability set.");
+    rb_sys_fail("Error activating capabilities.");
 
   return self;
 }
@@ -241,10 +241,10 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
     case T_FIXNUM:
       listsize = FIX2INT(arrsize);
       if (listsize > CAP_LEASE)
-	rb_raise(rb_eArgError, "Too many capabilities to set at once.");
+	rb_raise(rb_eArgError, "Too many capabilities to set at once");
 
       if ((set = malloc(listsize * sizeof(cap_value_t))) == NULL)
-	rb_raise(rb_eSystemCallError, "Error allocating memory.");
+	rb_sys_fail("Error allocating memory for capability array");
 
       for (i = 0; i < listsize; i++) {
 	arrelem = rb_funcall(caplist, rb_intern("[]"), 1, INT2FIX(i));
@@ -252,20 +252,20 @@ static VALUE captoggle(VALUE self, VALUE caplist, cap_flag_t type, cap_flag_valu
 	arrval = FIX2INT(arrelem);
 	if (arrval < CAP_CHOWN || arrval > CAP_LEASE) {
 	  free(set);
-	  rb_raise(rb_eArgError, "Invalid capability given in list.");
+	  rb_raise(rb_eArgError, "Invalid capability in list argument");
 	}
 
 	set[i] = arrval;
       }
       break;
     default: //if we're a bignum, we're way too large...
-      rb_raise(rb_eArgError, "Too many capabilities to set at once.");
+      rb_raise(rb_eArgError, "Too many capabilities to set at once");
       break;
   }
 
   if (cap_set_flag(caps, type, listsize, set, toggle) != 0) {
     free(set);
-    rb_raise(rb_eSystemCallError, "Error making capability flag change.");
+    rb_sys_fail("Error making capability flag change");
   }
 
   if (set) free(set);
@@ -348,7 +348,7 @@ static VALUE capisset (VALUE self, VALUE cap, cap_flag_t flag) {
   Check_Type(cap, T_FIXNUM);
 
   if (cap_get_flag(caps, FIX2INT(cap), flag, &val) != 0)
-    rb_raise(rb_eSystemCallError, "Error retrieving capability status.");
+    rb_sys_fail("Error retrieving capability status");
 
   return (val == CAP_SET ? Qtrue : Qfalse);
 }
