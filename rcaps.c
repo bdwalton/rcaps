@@ -78,6 +78,8 @@
  */
 
 #include "ruby.h"
+//so that we get _cap_names.
+#undef _POSIX_SOURCE
 #include <sys/capability.h>
 
 #include "rcaps.h"
@@ -384,34 +386,23 @@ static VALUE caps_INHERITABLE (VALUE self, VALUE cap) {\
 }
 
 static void caps_setup_constants (void) {
+  int i;
+  char *sname, *x;
+
   /* these constants represent capabilities that may be toggled on/off
    * in one of the sets of cap_flag_t enumerated list */
-  rb_define_const(rb_cCaps, "CHOWN", INT2FIX(CAP_CHOWN));
-  rb_define_const(rb_cCaps, "DAC_OVERRIDE", INT2FIX(CAP_DAC_OVERRIDE));
-  rb_define_const(rb_cCaps, "DAC_READ_SEARCH", INT2FIX(CAP_DAC_READ_SEARCH));
-  rb_define_const(rb_cCaps, "FOWNER", INT2FIX(CAP_FOWNER));
-  rb_define_const(rb_cCaps, "FSETID", INT2FIX(CAP_FSETID));
-  rb_define_const(rb_cCaps, "KILL", INT2FIX(CAP_KILL));
-  rb_define_const(rb_cCaps, "SETGID", INT2FIX(CAP_SETGID));
-  rb_define_const(rb_cCaps, "SETUID", INT2FIX(CAP_SETUID));
-  rb_define_const(rb_cCaps, "LINUX_IMMUTABLE", INT2FIX(CAP_LINUX_IMMUTABLE));
-  rb_define_const(rb_cCaps, "NET_BIND_SERVICE", INT2FIX(CAP_NET_BIND_SERVICE));
-  rb_define_const(rb_cCaps, "NET_BROADCAST", INT2FIX(CAP_NET_BROADCAST));
-  rb_define_const(rb_cCaps, "NET_ADMIN", INT2FIX(CAP_NET_ADMIN));
-  rb_define_const(rb_cCaps, "NET_RAW", INT2FIX(CAP_NET_RAW));
-  rb_define_const(rb_cCaps, "IPC_LOCK", INT2FIX(CAP_IPC_LOCK));
-  rb_define_const(rb_cCaps, "IPC_OWNER", INT2FIX(CAP_IPC_OWNER));
-  rb_define_const(rb_cCaps, "SYS_MODULE", INT2FIX(CAP_SYS_MODULE));
-  rb_define_const(rb_cCaps, "SYS_RAWIO", INT2FIX(CAP_SYS_RAWIO));
-  rb_define_const(rb_cCaps, "SYS_CHROOT", INT2FIX(CAP_SYS_CHROOT));
-  rb_define_const(rb_cCaps, "SYS_PTRACE", INT2FIX(CAP_SYS_PTRACE));
-  rb_define_const(rb_cCaps, "SYS_PACCT", INT2FIX(CAP_SYS_PACCT));
-  rb_define_const(rb_cCaps, "SYS_ADMIN", INT2FIX(CAP_SYS_ADMIN));
-  rb_define_const(rb_cCaps, "SYS_BOOT", INT2FIX(CAP_SYS_BOOT));
-  rb_define_const(rb_cCaps, "SYS_NICE", INT2FIX(CAP_SYS_NICE));
-  rb_define_const(rb_cCaps, "SYS_RESOURCE", INT2FIX(CAP_SYS_RESOURCE));
-  rb_define_const(rb_cCaps, "SYS_TIME", INT2FIX(CAP_SYS_TIME));
-  rb_define_const(rb_cCaps, "SYS_TTY_CONFIG", INT2FIX(CAP_SYS_TTY_CONFIG));
-  rb_define_const(rb_cCaps, "MKNOD", INT2FIX(CAP_MKNOD));
-  rb_define_const(rb_cCaps, "LEASE", INT2FIX(CAP_LEASE));
+
+  /* This makes us Linux specific, as _cap_names is not part of the POSIX
+   *  spec. */
+  for (i = 0; _cap_names[i]; i++) {
+    sname = strdup((char *)(_cap_names[i] + 4));  //strip off the cap_ part.
+    x = sname;
+    while (*x) {
+      *x = toupper(*x);
+      x++;
+    }
+
+    rb_define_const(rb_cCaps, sname, INT2FIX(i));
+    free(sname);
+  }
 }
