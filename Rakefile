@@ -7,13 +7,13 @@ CLEAN.include("pkg", "doc", "Makefile", "*.so", "*.o")
 
 spec = Gem::Specification.new do |s|
   s.name		= "rcaps"
-  s.version		= "0.9.10"
+  s.version		= "0.9.11"
   s.author		= "Ben Walton"
   s.email		= "bdwalton@gmail.com"
   s.homepage		= "http://rcaps.rubyforge.org/"
   s.rubyforge_project	= "http://rubyforge.org/projects/rcaps"
   s.summary    		= "A library for manipulating capabilities using the POSIX 1003.1e interfaces"
-  s.date		= '2008-09-27'
+  s.date		= '2008-10-09'
   s.extensions		= ['extconf.rb']
   s.files		= %w{COPYING gpl.txt rcaps.c rcaps.h}
   s.require_path	= 'lib'
