@@ -153,6 +153,19 @@ c.clear
 <p>
 c.set_proc
 </p>
+<h3>Fetch running capabilities from another process and <a href="Caps.html#M000005">clear</a> them.</h3>
+<p>
+require &#8216;rcaps&#8216;
+</p>
+<p>
+c = <a href="Caps.html#M000002">Caps.get_proc(1234)</a>
+</p>
+<p>
+c.clear
+</p>
+<p>
+c.set_proc(1234)
+</p>
 <h3>Fetch running capabilities and ensure a certain capability is not set.</h3>
 <p>
 require &#8216;rcaps&#8216;
@@ -228,160 +241,6 @@ puts &quot;I can change my UID&#8216;s!&quot; if c.effective?(Caps::SETUID)
     <div id="section">
 
 
-    <div id="constants-list">
-      <h3 class="section-bar">Constants</h3>
-
-      <div class="name-list">
-        <table summary="Constants">
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">CHOWN</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_CHOWN)</td>
-          <td width="3em">&nbsp;</td>
-          <td class="context-item-desc">
-these constants represent capabilities that may be toggled on/off in one of
-the sets of cap_flag_t enumerated list
-
-</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">DAC_OVERRIDE</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_DAC_OVERRIDE)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">DAC_READ_SEARCH</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_DAC_READ_SEARCH)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">FOWNER</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_FOWNER)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">FSETID</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_FSETID)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">KILL</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_KILL)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SETGID</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SETGID)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SETUID</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SETUID)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">LINUX_IMMUTABLE</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_LINUX_IMMUTABLE)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">NET_BIND_SERVICE</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_NET_BIND_SERVICE)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">NET_BROADCAST</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_NET_BROADCAST)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">NET_ADMIN</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_NET_ADMIN)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">NET_RAW</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_NET_RAW)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">IPC_LOCK</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_IPC_LOCK)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">IPC_OWNER</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_IPC_OWNER)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_MODULE</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_MODULE)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_RAWIO</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_RAWIO)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_CHROOT</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_CHROOT)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_PTRACE</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_PTRACE)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_PACCT</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_PACCT)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_ADMIN</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_ADMIN)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_BOOT</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_BOOT)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_NICE</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_NICE)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_RESOURCE</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_RESOURCE)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_TIME</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_TIME)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">SYS_TTY_CONFIG</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_SYS_TTY_CONFIG)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">MKNOD</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_MKNOD)</td>
-        </tr>
-        <tr class="top-aligned-row context-row">
-          <td class="context-item-name">LEASE</td>
-          <td>=</td>
-          <td class="context-item-value">INT2FIX(CAP_LEASE)</td>
-        </tr>
-        </table>
-      </div>
-    </div>
 
 
 
@@ -398,7 +257,7 @@ the sets of cap_flag_t enumerated list
         <div class="method-heading">
           <a href="Caps.src/M000002.html" target="Code" class="method-signature"
             onclick="popupCode('Caps.src/M000002.html');return false;">
-          <span class="method-name">get_proc</span><span class="method-args">()</span>
+          <span class="method-name">get_proc</span><span class="method-args">(...)</span>
           </a>
         </div>
       
@@ -406,7 +265,8 @@ the sets of cap_flag_t enumerated list
           <p>
 Returns a <a href="Caps.html#M000001">new</a> <a href="Caps.html">Caps</a>
 object initialized with the set of capabilities from the currently running
-process.
+process. If passed a pid, the capabilities for that process will be
+retrieved instead.
 </p>
         </div>
       </div>
@@ -675,14 +535,16 @@ href="Caps.html">Caps</a> class.
         <div class="method-heading">
           <a href="Caps.src/M000006.html" target="Code" class="method-signature"
             onclick="popupCode('Caps.src/M000006.html');return false;">
-          <span class="method-name">set_proc</span><span class="method-args">()</span>
+          <span class="method-name">set_proc</span><span class="method-args">(...)</span>
           </a>
         </div>
       
         <div class="method-description">
           <p>
 Install the <a href="Caps.html">Caps</a> object into the kernel. This is
-analogous to the C level function cap_set_proc.
+analogous to the C level function cap_set_proc. If a pid is given, the
+capabilities will be installed for that process instead. [Note: This likely
+won&#8216;t work, but we support it anyway]
 </p>
         </div>
       </div>

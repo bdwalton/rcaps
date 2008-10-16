@@ -13,8 +13,10 @@
   <pre>/*
  * Install the Caps object into the kernel.  This is analogous to the C level
  * function cap_set_proc.
+ * If a pid is given, the capabilities will be installed for that process
+ * instead.  [Note: This likely won't work, but we support it anyway]
  */
-static VALUE caps_set_proc (VALUE self) {
+static VALUE caps_set_proc (int argc, VALUE *argv, VALUE self) {
 </pre>
 </body>
 </html>

@@ -13,8 +13,10 @@
   <pre>/*
  * Returns a new Caps object initialized with the set of capabilities from
  * the currently running process.
+ * If passed a pid, the capabilities for that process will be retrieved
+ * instead.
  */
-static VALUE caps_get_proc (VALUE klass) {
+static VALUE caps_get_proc (int argc, VALUE *argv, VALUE klass) {
 </pre>
 </body>
 </html>
