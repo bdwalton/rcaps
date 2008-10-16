@@ -7,14 +7,14 @@ static void caps_setup_constants (void);  //define names for capabilities
 static void caps_free (cap_t);
 
 /* Caps class methods */
-static VALUE caps_init (int, VALUE *, VALUE);
 static VALUE caps_new (int, VALUE *, VALUE);
-static VALUE caps_get_proc (VALUE);
+static VALUE caps_get_proc (int, VALUE *, VALUE);
 
 /* Caps instance methods */
+static VALUE caps_init (int, VALUE *, VALUE);
 static VALUE caps_to_string (VALUE);
 static VALUE caps_clear (VALUE);
-static VALUE caps_set_proc (VALUE);
+static VALUE caps_set_proc (int, VALUE *, VALUE);
 static VALUE captoggle (VALUE, VALUE, cap_flag_t, cap_flag_value_t);
 // functions to toggle capabilities in the various sets.
 static VALUE caps_SET_EFFECTIVE (VALUE, VALUE);

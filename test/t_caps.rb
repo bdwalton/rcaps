@@ -26,6 +26,11 @@ class TestCaps < Test::Unit::TestCase
     assert_equal('=', c.to_s)
   end
 
+  def test_get_proc_with_pid
+    assert_nothing_raised { c = Caps.get_proc($$) }
+    assert_raises(TypeError) { c = Caps.get_proc('abc') }
+  end
+
   def test_init_args
     assert_raises(TypeError) { c = Caps.new(1) }
     assert_raises(ArgumentError) { c = Caps.new('=', 1) }
@@ -100,5 +105,14 @@ class TestCaps < Test::Unit::TestCase
     #privilege.  for lack of something similar to libfakeroot for capabilities,
     #we'll just ensure this fails for testing purposes.
     assert_raises(Errno::EPERM) { c.set_proc }
+    c.clear
+    assert_nothing_raised { c.set_proc }
+  end
+
+  def test_set_proc_with_pid
+    c = Caps.new
+    assert_raises(Errno::EPERM) { c.set_proc(1) }
+    assert_nothing_raised { c.set_proc($$) }
+    assert_raises(TypeError) { c.set_proc('abc') }
   end
 end

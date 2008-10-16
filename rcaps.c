@@ -49,6 +49,15 @@
  *
  * c.set_proc
  *
+ * === Fetch running capabilities from another process and clear them.
+ * require 'rcaps'
+ *
+ * c = Caps.get_proc(1234)
+ *
+ * c.clear
+ *
+ * c.set_proc(1234)
+ *
  * === Fetch running capabilities and ensure a certain capability is not set.
  * require 'rcaps'
  *
@@ -92,13 +101,13 @@ Init_rcaps()
 
   /* Caps class methods */
   rb_define_singleton_method(rb_cCaps, "new", caps_new, -1);
-  rb_define_singleton_method(rb_cCaps, "get_proc", caps_get_proc, 0);
+  rb_define_singleton_method(rb_cCaps, "get_proc", caps_get_proc, -1);
 
   /* Caps instance methods */
   rb_define_method(rb_cCaps, "initialize", caps_init, -1);
   rb_define_method(rb_cCaps, "to_s", caps_to_string, 0);
   rb_define_method(rb_cCaps, "clear", caps_clear, 0);
-  rb_define_method(rb_cCaps, "set_proc", caps_set_proc, 0);
+  rb_define_method(rb_cCaps, "set_proc", caps_set_proc, -1);
   rb_define_method(rb_cCaps, "set_effective", caps_SET_EFFECTIVE, 1);
   rb_define_method(rb_cCaps, "clear_effective", caps_CLEAR_EFFECTIVE, 1);
   rb_define_method(rb_cCaps, "set_permitted", caps_SET_PERMITTED, 1);
@@ -150,20 +159,38 @@ static VALUE caps_new (int argc, VALUE *argv, VALUE klass) {
 /*
  * Returns a new Caps object initialized with the set of capabilities from
  * the currently running process.
+ * If passed a pid, the capabilities for that process will be retrieved
+ * instead.
  */
-static VALUE caps_get_proc (VALUE klass) {
+static VALUE caps_get_proc (int argc, VALUE *argv, VALUE klass) {
   cap_t caps;
-  VALUE cdata;
-  VALUE argv[1];
+  VALUE cdata, optional_pid;
+  pid_t pid;
 
-  if ((caps = cap_get_proc()) == NULL)
-    rb_sys_fail("Error retrieving active capabilties");
+  rb_scan_args(argc, argv, "01", &optional_pid);
+
+  switch(TYPE(optional_pid)) {
+    case T_NIL:
+      //without an argument, we'll fetch our own current capabilities.
+      pid = getpid();
+      break;
+    case T_FIXNUM:
+      pid = (pid_t) FIX2INT(optional_pid);
+      break;
+    default:
+      rb_raise(rb_eTypeError, "Invalid value passed as PID to retrieve capabilities from.");
+      break;
+  }
+
+  if ((caps = cap_init()) == NULL)
+    rb_sys_fail("Error initializing empty capability set");
+  else if (capgetp(pid, caps) != 0)
+    rb_sys_fail("Error retrieving capabilities from active process");
 
   //as this is just a convenience wrapper instead of new(), we still
   //want to call initialize.
   cdata = Data_Wrap_Struct(klass, 0, caps_free, caps);
-  argv[0] = rb_funcall(cdata, rb_intern("to_s"), 0);
-  rb_obj_call_init(cdata, 1, argv);
+  rb_obj_call_init(cdata, argc, argv);
 
   return cdata;
 }
@@ -214,14 +241,32 @@ static VALUE caps_clear (VALUE self) {
 /*
  * Install the Caps object into the kernel.  This is analogous to the C level
  * function cap_set_proc.
+ * If a pid is given, the capabilities will be installed for that process
+ * instead.  [Note: This likely won't work, but we support it anyway]
  */
-static VALUE caps_set_proc (VALUE self) {
+static VALUE caps_set_proc (int argc, VALUE *argv, VALUE self) {
   cap_t caps;
+  VALUE optional_pid;
+  pid_t pid;
 
   Data_Get_Struct(self, struct _cap_struct, caps);
+  rb_scan_args(argc, argv, "01", &optional_pid);
 
-  if (cap_set_proc(caps) != 0)
-    rb_sys_fail("Error activating capabilities.");
+  switch(TYPE(optional_pid)) {
+    case T_NIL:
+      //without an argument, we'll fetch our own current capabilities.
+      pid = getpid();
+      break;
+    case T_FIXNUM:
+      pid = (pid_t) FIX2INT(optional_pid);
+      break;
+    default:
+      rb_raise(rb_eTypeError, "Invalid value passed as PID to retrieve capabilities from.");
+      break;
+  }
+
+  if (capsetp(pid, caps) != 0)
+    rb_sys_fail("Error setting capabilities for process");
 
   return self;
 }
