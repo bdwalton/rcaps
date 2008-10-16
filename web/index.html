@@ -19,13 +19,9 @@
     <p>You might find this functionality useful if for example you need to run
     a process that needs the ability to change UID's, but don't want to allow
     it to bind ports below 1024.  By using Capabilties, you could grant
-    CAP_SETUID and nothing else, thus protecting youself (somewhat, changing
-    UID's is still a powerful privilege) from attack...or more simply,
+    CAP_SETUID and nothing else, thus protecting yourself (somewhat at least,
+    changing UID's is still a powerful privilege) from attack...or more simply,
     minimizing your attack surface.</p>
-
-    <p>At this point, the C extension code works well enough, but I still need
-    to add tests and a gem wrapper for it.  The development is available
-    via GIT currently if you want to see it before it's "gem install"-able.</p>
 
     <p>All RDoc info is <a href="doc/">now available online</a>.</p>
 
